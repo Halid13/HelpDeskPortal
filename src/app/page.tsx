@@ -47,6 +47,18 @@ const PROBLEM_TYPES = [
   'Autre problème',
 ];
 
+const PROBLEM_TYPE_DEFAULTS: Record<string, { category: string; priority: string }> = {
+  'Impossible de se connecter au compte':         { category: 'user',     priority: 'high' },
+  'Mot de passe oublié / compte verrouillé':      { category: 'user',     priority: 'high' },
+  'Erreur application (Outlook, Office, ERP, etc.)': { category: 'software', priority: 'medium' },
+  'Ordinateur lent / bloqué':                     { category: 'hardware', priority: 'medium' },
+  'Problème réseau / Internet / Wi-Fi':           { category: 'network',  priority: 'high' },
+  'Imprimante non disponible':                    { category: 'hardware', priority: 'low' },
+  'Demande d\'installation logicielle':           { category: 'software', priority: 'low' },
+  'Demande d\'accès / droits':                    { category: 'user',     priority: 'medium' },
+  'Autre problème':                               { category: 'other',    priority: 'medium' },
+};
+
 interface FormData {
   name: string;
   email: string;
@@ -88,7 +100,14 @@ export default function HomePage() {
   };
 
   const selectProblemType = (value: string) => {
-    handleChange('title', value);
+    const defaults = PROBLEM_TYPE_DEFAULTS[value];
+    setForm((prev) => ({
+      ...prev,
+      title: value,
+      category: defaults?.category ?? prev.category,
+      priority: defaults?.priority ?? prev.priority,
+    }));
+    if (error) setError('');
     setDropdownOpen(false);
   };
 
