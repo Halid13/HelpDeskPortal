@@ -257,16 +257,18 @@ export default function HomePage() {
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Catégorie <span className="text-red-500">*</span>
             </label>
+            <p className="text-xs text-gray-400 mb-2">Automatique selon le type de problème</p>
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
               {CATEGORIES.map(({ value, label, icon: Icon, color }) => (
                 <button
                   key={value}
                   type="button"
-                  onClick={() => handleChange('category', value)}
+                  disabled
+                  aria-disabled="true"
                   className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 text-xs font-medium transition-all ${
                     form.category === value
                       ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm'
-                      : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                      : 'border-gray-200 bg-white text-gray-600 opacity-60'
                   }`}
                 >
                   <Icon size={20} className={form.category === value ? 'text-blue-600' : color} />
@@ -281,16 +283,18 @@ export default function HomePage() {
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Priorité <span className="text-red-500">*</span>
             </label>
+            <p className="text-xs text-gray-400 mb-2">Automatique selon le type de problème</p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {PRIORITIES.map(({ value, label, description, color }) => (
                 <button
                   key={value}
                   type="button"
-                  onClick={() => handleChange('priority', value)}
+                  disabled
+                  aria-disabled="true"
                   className={`flex flex-col items-start gap-0.5 p-3 rounded-xl border-2 text-left transition-all ${
                     form.priority === value
                       ? `${color} border-current shadow-sm`
-                      : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                      : 'border-gray-200 bg-white text-gray-600 opacity-60'
                   }`}
                 >
                   <span className="text-xs font-semibold">{label}</span>

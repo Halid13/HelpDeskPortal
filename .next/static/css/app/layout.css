@@ -952,6 +952,9 @@ video {
   --tw-text-opacity: 1;
   color: rgb(161 98 7 / var(--tw-text-opacity, 1));
 }
+.opacity-60 {
+  opacity: 0.6;
+}
 .opacity-75 {
   opacity: 0.75;
 }
@@ -1006,10 +1009,6 @@ video {
 }
 .duration-200 {
   transition-duration: 200ms;
-}
-.hover\:border-gray-300:hover {
-  --tw-border-opacity: 1;
-  border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
 }
 .hover\:border-gray-400:hover {
   --tw-border-opacity: 1;
