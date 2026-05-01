@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+	--hd-surface: #ffffff;
+	--hd-surface-soft: #f8fafc;
+	--hd-border: #e2e8f0;
+	--hd-ink: #0f172a;
+	--hd-muted: #64748b;
+}
+
+html,
+body {
+	color: var(--hd-ink);
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+	background-color: #f1f5f9;
+	background-image:
+		radial-gradient(circle at 0 0, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+		linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+	background-size: 16px 16px, 100% 100%;
+}
