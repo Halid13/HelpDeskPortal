@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRef, useEffect } from 'react';
 import {
   MonitorCheck,
   User,
@@ -8,6 +9,7 @@ import {
   Tag,
   AlignLeft,
   ChevronDown,
+  Check,
   Loader2,
   Send,
   AlertTriangle,
@@ -33,6 +35,18 @@ const PRIORITIES = [
   { value: 'critical', label: 'Critique', description: 'Arrêt total de l\'activité', color: 'border-red-400 bg-red-50 text-red-700' },
 ];
 
+const PROBLEM_TYPES = [
+  'Impossible de se connecter au compte',
+  'Mot de passe oublié / compte verrouillé',
+  'Erreur application (Outlook, Office, ERP, etc.)',
+  'Ordinateur lent / bloqué',
+  'Problème réseau / Internet / Wi-Fi',
+  'Imprimante non disponible',
+  'Demande d\'installation logicielle',
+  'Demande d\'accès / droits',
+  'Autre problème',
+];
+
 interface FormData {
   name: string;
   email: string;
@@ -54,10 +68,28 @@ export default function HomePage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Fermer le dropdown si clic à l'extérieur
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   const handleChange = (field: keyof FormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     if (error) setError('');
+  };
+
+  const selectProblemType = (value: string) => {
+    handleChange('title', value);
+    setDropdownOpen(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -146,23 +178,59 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Titre */}
+          {/* Type du probleme */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1.5">
               <span className="flex items-center gap-1.5">
                 <Tag size={14} className="text-gray-400" />
-                Titre du problème <span className="text-red-500">*</span>
+                Type du problème <span className="text-red-500">*</span>
               </span>
             </label>
-            <input
-              type="text"
-              value={form.title}
-              onChange={(e) => handleChange('title', e.target.value)}
-              placeholder="ex : Impossible d'ouvrir Outlook depuis ce matin"
-              required
-              maxLength={200}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-            />
+            {/* Champ hidden pour la validation native du formulaire */}
+            <input type="text" required value={form.title} onChange={() => {}} className="sr-only" tabIndex={-1} aria-hidden="true" />
+            <div ref={dropdownRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setDropdownOpen((o) => !o)}
+                className={`w-full flex items-center justify-between px-4 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                  dropdownOpen
+                    ? 'border-blue-500 ring-2 ring-blue-500 bg-white'
+                    : 'border-gray-300 bg-white hover:border-gray-400'
+                }`}
+              >
+                <span className={form.title ? 'text-gray-900' : 'text-gray-400'}>
+                  {form.title || 'Sélectionnez un type de problème'}
+                </span>
+                <ChevronDown
+                  size={16}
+                  className={`text-gray-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              {dropdownOpen && (
+                <ul className="absolute z-20 mt-1.5 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden py-1">
+                  {PROBLEM_TYPES.map((problemType) => {
+                    const selected = form.title === problemType;
+                    return (
+                      <li key={problemType}>
+                        <button
+                          type="button"
+                          onClick={() => selectProblemType(problemType)}
+                          className={`w-full flex items-center justify-between px-4 py-2.5 text-sm text-left transition-colors ${
+                            selected
+                              ? 'bg-blue-50 text-blue-700 font-medium'
+                              : 'text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          {problemType}
+                          {selected && <Check size={14} className="text-blue-600 shrink-0 ml-2" />}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
           </div>
 
           {/* Catégorie */}
