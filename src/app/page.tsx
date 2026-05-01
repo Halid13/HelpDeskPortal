@@ -195,7 +195,7 @@ export default function HomePage() {
                   <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100">
                     <ClipboardList size={13} className="text-blue-600" />
                   </div>
-                  <span>Ticket cree dans MasterMonitor</span>
+                  <span>Ticket créé dans MasterMonitor</span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-purple-100">
@@ -207,7 +207,7 @@ export default function HomePage() {
                   <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-100">
                     <Timer size={13} className="text-amber-600" />
                   </div>
-                  <span>Suivi selon la priorite detectee</span>
+                  <span>Suivi selon la priorité détectée</span>
                 </li>
               </ul>
             </div>
@@ -217,7 +217,7 @@ export default function HomePage() {
               <div className="rounded-xl border border-blue-100 bg-blue-50 shadow-sm">
                 <div className="flex items-center gap-2 border-b border-blue-100 px-4 py-3">
                   <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
-                  <p className="text-xs font-semibold uppercase tracking-widest text-blue-600">Apercu</p>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-blue-600">Aperçu</p>
                 </div>
                 <div className="space-y-2 px-4 py-4">
                   {activeCat && (
@@ -225,7 +225,7 @@ export default function HomePage() {
                       <div className={`flex h-6 w-6 items-center justify-center rounded-full ${activeCat.bg}`}>
                         <activeCat.icon size={13} className={activeCat.color} />
                       </div>
-                      <span className="text-xs font-medium text-slate-700">Categorie : {activeCat.label}</span>
+                      <span className="text-xs font-medium text-slate-700">Catégorie : {activeCat.label}</span>
                     </div>
                   )}
                   {activePri && (
@@ -243,7 +243,7 @@ export default function HomePage() {
             {/* Tip */}
             <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-800">
               <p className="mb-1 font-semibold">Conseil</p>
-              Decrivez le contexte, le message d'erreur et les etapes deja testees pour une resolution plus rapide.
+              Décrivez le contexte, le message d'erreur et les étapes déjà testées pour une résolution plus rapide.
             </div>
           </aside>
 
@@ -254,7 +254,7 @@ export default function HomePage() {
               <div className="h-8 w-1 rounded-full bg-blue-600" />
               <div>
                 <h3 className="text-base font-semibold text-slate-900">Nouveau ticket</h3>
-                <p className="text-xs text-slate-400">Les champs marques d'un * sont obligatoires.</p>
+                <p className="text-xs text-slate-400">Les champs marqués d'un * sont obligatoires.</p>
               </div>
             </div>
 
@@ -308,7 +308,7 @@ export default function HomePage() {
 
                 <div className="mb-4">
                   <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                    Type du probleme <span className="text-red-500">*</span>
+                    Type du problème <span className="text-red-500">*</span>
                   </label>
                   <input type="text" required value={form.title} onChange={() => {}} className="sr-only" tabIndex={-1} aria-hidden="true" />
                   <div ref={dropdownRef} className="relative">
@@ -322,7 +322,7 @@ export default function HomePage() {
                       }`}
                     >
                       <span className={form.title ? 'text-slate-900' : 'text-slate-400'}>
-                        {form.title || 'Selectionnez un type de probleme'}
+                        {form.title || 'Sélectionnez un type de problème'}
                       </span>
                       <ChevronDown
                         size={16}
