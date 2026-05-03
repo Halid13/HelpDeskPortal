@@ -21,6 +21,7 @@ import {
   AlignLeft,
   Wifi,
   AlertCircle,
+  LogOut,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -72,8 +73,16 @@ interface FormData {
   priority: string;
 }
 
+type SessionUser = {
+  name: string;
+  email: string;
+  username?: string;
+};
+
 export default function HomePage() {
   const router = useRouter();
+  const [authLoading, setAuthLoading] = useState(true);
+  const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
   const [form, setForm] = useState<FormData>({
     name: '',
     email: '',
@@ -86,6 +95,37 @@ export default function HomePage() {
   const [error, setError] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const loadSession = async () => {
+      try {
+        const res = await fetch('/api/auth/me', { cache: 'no-store' });
+        if (!res.ok) {
+          router.replace('/login');
+          return;
+        }
+        const data = await res.json();
+        const user = data?.user as SessionUser | undefined;
+        if (!user?.email) {
+          router.replace('/login');
+          return;
+        }
+
+        setSessionUser(user);
+        setForm((prev) => ({
+          ...prev,
+          name: user.name || prev.name,
+          email: user.email,
+        }));
+      } catch {
+        router.replace('/login');
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+
+    void loadSession();
+  }, [router]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -127,10 +167,16 @@ export default function HomePage() {
     setLoading(true);
     setError('');
     try {
+      const payload = {
+        ...form,
+        name: sessionUser?.name || form.name,
+        email: sessionUser?.email || form.email,
+      };
+
       const res = await fetch('/api/tickets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -148,6 +194,23 @@ export default function HomePage() {
   const activeCat = CATEGORIES.find((c) => c.value === form.category);
   const activePri = PRIORITIES.find((p) => p.value === form.priority);
 
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } finally {
+      router.push('/login');
+      router.refresh();
+    }
+  };
+
+  if (authLoading) {
+    return (
+      <main className="min-h-screen bg-slate-100 flex items-center justify-center text-slate-500">
+        Verification de votre session...
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-slate-100">
       {/* Top bar — same style as MasterMonitor */}
@@ -162,9 +225,19 @@ export default function HomePage() {
               <h1 className="text-base font-bold text-white">Portail HelpDesk</h1>
             </div>
           </div>
-          <div className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800/60 px-3 py-1.5 text-xs font-medium text-slate-300">
-            <ShieldCheck size={13} className="text-emerald-400" />
-            Canal securise
+          <div className="flex items-center gap-2">
+            <div className="hidden sm:flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800/60 px-3 py-1.5 text-xs font-medium text-slate-300">
+              <ShieldCheck size={13} className="text-emerald-400" />
+              {sessionUser?.email || 'Canal securise'}
+            </div>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800/60 px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:bg-slate-700"
+            >
+              <LogOut size={13} />
+              Deconnexion
+            </button>
           </div>
         </div>
       </div>
@@ -270,27 +343,23 @@ export default function HomePage() {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Nom complet <span className="text-red-500">*</span>
+                      Nom complet (AD)
                     </label>
                     <input
                       type="text"
                       value={form.name}
-                      onChange={(e) => handleChange('name', e.target.value)}
-                      placeholder="Ex : Jean Dupont"
-                      required
+                      readOnly
                       className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     />
                   </div>
                   <div>
                     <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Adresse email <span className="text-red-500">*</span>
+                      Adresse email (AD)
                     </label>
                     <input
                       type="email"
                       value={form.email}
-                      onChange={(e) => handleChange('email', e.target.value)}
-                      placeholder="jean.dupont@entreprise.fr"
-                      required
+                      readOnly
                       className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     />
                   </div>
