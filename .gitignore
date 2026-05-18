@@ -1,5 +1,2 @@
 node_modules
 .next
-.env.example
-.env.local
-.env*.local
